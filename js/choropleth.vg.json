@@ -30,27 +30,34 @@
               "url": "data/vax_state.csv"
             },
             "key": "state",
-            "fields": ["cumul", "static_pop"]
+            "fields": ["cumul_full", "static_pop"]
           }
         },
         {
-          "calculate": "datum.cumul/datum.static_pop * 10000",
-          "as": "Cases per 10,000 population"
+          "calculate": "datum.cumul_full/datum.static_pop * 10000",
+          "as": "Vaccination rate per 10,000"
         }
       ],
       "mark": { "type": "geoshape", "stroke": "white" },
       "encoding": {
         "color": {
-          "field": "Cases per 10,000 population",
+          "field": "Vaccination rate per 10,000",
           "type": "quantitative",
-          "scale": { "type": "log" }
+          "scale": { "type": "log" },
+          "legend": {
+            "title": "Vaccination rate per 10,000 population",
+            "titleLimit": 225,
+            "gradientLength": 255,
+            "values": [7000, 10000, 15000]
+          }
         },
+
         "tooltip": [
           { "field": "properties.name", "type": "nominal", "title": "State" },
           {
-            "field": "Cases per 10,000 population",
+            "field": "Vaccination rate per 10,000",
             "type": "quantitative",
-            "format": ".3s"
+            "format": ".2s"
           }
         ]
       }
@@ -59,6 +66,7 @@
   "config": {
     "legend": {
       "orient": "bottom",
+      "padding": 2,
       "layout": { "expr": "", "bottom": { "anchor": "middle" } }
     }
   }
