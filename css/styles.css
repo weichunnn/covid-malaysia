@@ -4,10 +4,16 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 10vh;
 }
 
 .footer {
   margin-top: -10px;
   margin-bottom: 10px;
+}
+
+.contain {
+  background-color: #ffffff;
+  padding: 10px;
+  margin-bottom: 5vh;
+  border-radius: 10px;
 }

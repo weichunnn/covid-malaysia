@@ -1,0 +1,197 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 800,
+  "height": 400,
+  "data": {
+    "url": "https://raw.githubusercontent.com/weichunnn/covid-analysis/master/data/vaccination/vax_malaysia_pivot_compress.csv"
+  },
+  "transform": [
+    {
+      "calculate": "timeParse(datum['date'], '%d/%m/%Y')",
+      "as": "date"
+    },
+    {
+      "timeUnit": "yearmonth",
+      "field": "date",
+      "as": "date2"
+    },
+    {
+      "filter": {
+        "timeUnit": "year",
+        "field": "date",
+        "gte": 2021
+      }
+    },
+    {
+      "filter": {
+        "field": "vaccine_type",
+        "oneOf": ["Pfizer", "Sinovac", "Astra", "Cansino"]
+      }
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "vaccine_count",
+          "as": "total_month"
+        }
+      ],
+      "groupby": ["date2"]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "vaccine_count",
+          "as": "total_vax_month"
+        }
+      ],
+      "groupby": ["date2", "vaccine_type"]
+    },
+    {
+      "calculate": "datum.total_vax_month / datum.total_month",
+      "as": "fraction"
+    },
+    {
+      "calculate": "random()",
+      "as": "jitter"
+    }
+  ],
+  "layer": [
+    {
+      "width": 800,
+      "height": 400,
+      "encoding": {
+        "x": {
+          "type": "temporal",
+          "field": "date2",
+          "title": "Period",
+          "axis": {
+            "format": "%b %Y",
+            "title": "Period",
+            "grid": false,
+            "tickCount": {
+              "interval": "month",
+              "step": 2
+            }
+          }
+        },
+        "y": {
+          "type": "quantitative",
+          "aggregate": "sum",
+          "field": "vaccine_count",
+          "stack": "normalize",
+          "title": "Percentage Count",
+          "axis": {
+            "title": "Percentage",
+            "grid": false
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "area",
+            "tooltip": true
+          },
+          "encoding": {
+            "fill": {
+              "field": "vaccine_type",
+              "title": "Vaccine Type",
+              "scale": {
+                "scheme": "category20b",
+                "domain": ["Pfizer", "Sinovac", "Astra", "Cansino"],
+                "range": ["#045a8d", "#4C78A0", "#74a9cf", "#bdc9e1"]
+              },
+              "legend": {
+                "orient": "bottom",
+                "title": "Vaccine Type"
+              }
+            },
+            "fillOpacity": {
+              "condition": {
+                "param": "continent_highlight",
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "order": {}
+          },
+          "params": [
+            {
+              "name": "continent_highlight",
+              "select": {
+                "type": "point",
+                "fields": ["vaccine_type"]
+              },
+              "bind": "legend"
+            }
+          ]
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "x": "2021-07-01",
+                "y": 1,
+                "labels": [
+                  "Health Minister declared",
+                  "Pfizer as main vaccine",
+                  "as Sinovac depletes"
+                ]
+              },
+              {
+                "x": "2022-01-01",
+                "y": 0.5,
+                "labels": [
+                  "First batch of Astra",
+                  "receipient after 6 months",
+                  "wait on waiting list"
+                ]
+              }
+            ]
+          },
+          "layer": [
+            {
+              "encoding": {
+                "x": {
+                  "type": "temporal",
+                  "field": "x"
+                },
+                "y": {}
+              },
+              "mark": {
+                "type": "rule",
+                "size": 2,
+                "color": "gray"
+              }
+            },
+            {
+              "encoding": {
+                "x": {
+                  "type": "temporal",
+                  "field": "x"
+                },
+                "y": {
+                  "type": "quantitative",
+                  "field": "y"
+                },
+                "text": {
+                  "type": "nominal",
+                  "field": "labels"
+                }
+              },
+              "mark": {
+                "type": "text",
+                "align": "center",
+                "dy": -40,
+                "baseline": "bottom",
+                "fontSize": 14
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
