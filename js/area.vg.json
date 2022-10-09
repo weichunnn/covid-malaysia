@@ -163,7 +163,8 @@
               "mark": {
                 "type": "rule",
                 "size": 2,
-                "color": "gray"
+                "strokeDash": [10, 10],
+                "color": "black"
               }
             },
             {
