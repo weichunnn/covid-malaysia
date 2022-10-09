@@ -84,6 +84,7 @@
           "title": "Percentage Count",
           "axis": {
             "title": "Percentage",
+            "format": ".0%",
             "grid": false
           }
         }
